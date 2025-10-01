@@ -83,7 +83,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = db.session.execute(db.select(User).filter_by(email=form.email.data)).scalar_one_or_none()
+        user = db.session.execute(db.select(User).where(User.email == form.email.data))
         if not user:
             flash("That email does not exist, please try again.")
             return redirect(url_for('login'))
