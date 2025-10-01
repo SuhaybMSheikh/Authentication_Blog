@@ -32,7 +32,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(user_id)
 
 # CONFIGURE TABLES
 class BlogPost(db.Model):
@@ -62,7 +62,7 @@ with app.app_context():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        if db.session.execute(db.select(User).filter_by(email=form.email.data)).first():
+        if db.session.execute(db.select(User).where(User.email == form.email.data)).scalar():
             flash("You've already signed up with that email, log in instead!")
             return redirect(url_for('login'))
         hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
@@ -73,27 +73,26 @@ def register():
         )
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('login'))
+        login_user(new_user)
+        return redirect(url_for('get_all_posts'))
     return render_template("register.html", form=form)
 
 
 # TODO: Retrieve a user from the database based on their email. 
 @app.route('/login', methods=["GET", "POST"])
-@login_required
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = db.session.execute(db.select(User).where(User.email == form.email.data))
-        if not user:
-            flash("That email does not exist, please try again.")
-            return redirect(url_for('login'))
-        elif not check_password_hash(user.password, form.password.data):
-            flash('Password incorrect, please try again.')
-            return redirect(url_for('login'))
-        else:
+        email = form.email.data
+        password = form.password.data
+        result = db.session.execute(db.select(User).where(User.email == email))
+        # Note, email in db is unique so will only have one result.
+        user = result.scalar()
+
+        if user and check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for('get_all_posts'))
-    return render_template("login.html")
+    return render_template("login.html", form=form)
 
 
 @app.route('/logout')
