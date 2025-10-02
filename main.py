@@ -50,6 +50,7 @@ class User(UserMixin, db.Model):
     name: Mapped[str] = mapped_column(String(250), nullable=False)
 
     blog_posts = relationship("BlogPost", back_populates="author")
+    comments = relationship("Comment", back_populates="comment_author")
 
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
@@ -61,6 +62,13 @@ class BlogPost(db.Model):
     date: Mapped[str] = mapped_column(String(250), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
     img_url: Mapped[str] = mapped_column(String(250), nullable=False)
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    author_id: Mapped[int] = mapped_column(Integer, db.ForeignKey("User.id"))
+    comment_author = relationship("User", back_populates="comments")
 
 with app.app_context():
     db.create_all()
