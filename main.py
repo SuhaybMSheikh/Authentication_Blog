@@ -106,7 +106,6 @@ def register():
         return redirect(url_for('get_all_posts'))
     return render_template("register.html", form=form, current_user=current_user)
 
-
 @app.route('/login', methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -128,12 +127,10 @@ def login():
             return redirect(url_for('get_all_posts'))
     return render_template("login.html", form=form, current_user=current_user)
 
-
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('get_all_posts'))
-
 
 @app.route('/')
 def get_all_posts():
@@ -141,8 +138,6 @@ def get_all_posts():
     posts = result.scalars().all()
     return render_template("index.html", all_posts=posts, current_user=current_user)
 
-
-# TODO: Allow logged-in users to comment on posts
 @app.route("/post/<int:post_id>", methods=["GET", "POST"])
 def show_post(post_id):
     requested_post = db.get_or_404(BlogPost, post_id)
