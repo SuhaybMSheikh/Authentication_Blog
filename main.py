@@ -86,7 +86,7 @@ gravatar = Gravatar(app,
                     use_ssl=False,
                     base_url=None)
 
-# TODO: Use Werkzeug to hash the user's password when creating a new user.
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()
