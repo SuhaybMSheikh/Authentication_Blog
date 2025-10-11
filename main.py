@@ -156,8 +156,6 @@ def show_post(post_id):
         return redirect(url_for('show_post', post_id=post_id))
     return render_template("post.html", post=requested_post, current_user=current_user, form=comment_form)
 
-
-# TODO: Use a decorator so only an admin user can create a new post
 @app.route("/new-post", methods=["GET", "POST"])
 @admin_only
 def add_new_post():
