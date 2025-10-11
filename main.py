@@ -174,8 +174,6 @@ def add_new_post():
         return redirect(url_for("get_all_posts"))
     return render_template("make-post.html", form=form, current_user=current_user)
 
-
-# TODO: Use a decorator so only an admin user can edit a post
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @admin_only
 def edit_post(post_id):
@@ -197,8 +195,6 @@ def edit_post(post_id):
         return redirect(url_for("show_post", post_id=post.id))
     return render_template("make-post.html", form=edit_form, is_edit=True, current_user=current_user)
 
-
-# TODO: Use a decorator so only an admin user can delete a post
 @app.route("/delete/<int:post_id>")
 @admin_only
 def delete_post(post_id):
